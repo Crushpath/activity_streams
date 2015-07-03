@@ -4,12 +4,15 @@ describe ActivityStreams::Person do
 
   before do
     @person = ActivityStreams::Person.new
+    @image_url = 'http://c683771.r71.cf2.rackcdn.com/uploads/product/avatar/person_thumb_default.png'
+    ActivityStreams.configure do |config|
+      config.person_default_url = @image_url
+    end
   end
 
   it "should have default thumbnail" do
     @person.avatar_url.should_not be_nil
-    @person.avatar_url.should =~ /default.png$/
-    @person.avatar_url.should =~ /person/
+    expect(@person.avatar_url).to eq(@image_url)
   end
 
   it "should return non-default thumbnail if specified" do

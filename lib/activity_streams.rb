@@ -38,7 +38,7 @@ module ActivityStreams
 
 
   class << self
-    attr_accessor :verbs, :object_types, :activity_types, :distance_of_time_in_words
+    attr_accessor :verbs, :object_types, :activity_types, :distance_of_time_in_words, :person_default_url
 
     def configure(&block)
       yield self
