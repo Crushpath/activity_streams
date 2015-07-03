@@ -36,10 +36,9 @@ module ActivityStreams
   @object_types = {}
   @activity_types = []
 
-  @admin_tenant = nil
 
   class << self
-    attr_accessor :verbs, :object_types, :activity_types, :admin_tenant, :distance_of_time_in_words
+    attr_accessor :verbs, :object_types, :activity_types, :distance_of_time_in_words
 
     def configure(&block)
       yield self
