@@ -21,26 +21,47 @@ Or install it yourself as:
 ## Usage
 
 ``` ruby
+
+Mongoid.configure do |config|
+  config.sessions = {:default => {:hosts => ["localhost:27017"], :database => "activity_streams"}}
+end
+
+
 ActivityStreams.configure do |config|
+  config.distance_of_time_in_words = Proc.new do |from, to|
+    Module::distance_of_time_in_words(from, to) 
+  end
   config.verbs[:view] = {}
   config.verbs[:comment] = {}
   
   config.activity_types = [:opportunity, :organization, :comment, :buyer_message, :buyer_question, :buyer_organization, :milestone, :article, :buyer_article]
 end
+
+
+act = ActivityStreams::Activity.new
+act.verb = :view
+act.actor = ActivityStreams::Person.new(display_name: "Monica Wilkinson")
+act.object = ActivityStreams::Article.new(content: "This is the story of A & B")
+act.save!
+
+2.2.2 :019 > act.reload.object
+ => #<ActivityStreams::Article _id: 5596e4be0e4dc9544c000003, url: nil, public_url: nil, display_name: nil, summary: nil, content: "This is the story of A & B", downstream_duplicates: nil, upstream_duplicates: nil, _type: "ActivityStreams::Article"> 
+
 ```
 
-## Development
+#### Mongo Document is
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/activity_streams. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
-
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+``` json
+{ "_id" : ObjectId( "5596e4be0e4dc9544c000001" ),
+  "verb" : "view",
+  "_type" : "ActivityStreams::Activity",
+  "updated_at" : Date( 1435952319581 ),
+  "created_at" : Date( 1435952319581 ),
+  "object" : { "_id" : ObjectId( "5596e4be0e4dc9544c000003" ),
+    "_type" : "ActivityStreams::Article",
+    "content" : "This is the story of A & B" },
+  "actor" : { "_id" : ObjectId( "5596e4be0e4dc9544c000002" ),
+    "_type" : "ActivityStreams::Person",
+    "display_name" : "Monica Wilkinson" } }
+```    
 
